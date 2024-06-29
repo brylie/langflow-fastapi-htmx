@@ -7,11 +7,14 @@ ENDPOINT = ""  # You can set a specific endpoint name in the flow settings
 
 # You can tweak the flow by adding a tweaks dictionary
 TWEAKS = {
-    "Memory-FvisK": {},
     "Prompt-e7qkR": {},
     "ChatInput-ZVCpy": {},
     "OpenAIModel-YWZWf": {},
     "ChatOutput-gADpg": {},
+    "Memory-dw7V3": {},
+    "TextInput-yH3PL": {
+        "input_value": "session-123",
+    },
 }
 
 
