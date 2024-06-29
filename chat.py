@@ -6,6 +6,8 @@ from typing import List, Dict
 import markdown2
 
 from chat_gpt_client import get_chat_response_with_history, Message, MessageRole
+from rag_service import RAGService
+from vector_store import MockVectorStore, PineconeStore  # Or whichever store you prefer
 
 app = FastAPI()
 
@@ -14,9 +16,14 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 templates = Jinja2Templates(directory="templates")
 
-
 # Simulating a database with an in-memory list
 chat_history: List[Message] = []
+
+# Initialize RAG service
+vector_store = MockVectorStore()  # Initialize with your Pinecone settings
+rag_service = RAGService(vector_store)
+
+SYSTEM_PROMPT = "You are a helpful assistant that answers questions based on the given context and chat history."
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -32,22 +39,21 @@ async def read_root(request: Request) -> HTMLResponse:
 
 @app.post("/chat")
 async def chat(message: str = Form(...)) -> HTMLResponse:
-    # Add user message to chat history
-    chat_history.append(Message(role=MessageRole.user, content=message))
+    # Prepare messages with the correct order
+    prepared_messages = await rag_service.prepare_messages(
+        system_prompt=SYSTEM_PROMPT,
+        chat_history=chat_history[-5:],  # Last 5 messages for context
+        user_message=message,
+    )
 
-    # Prepare chat history for GPT
-    gpt_messages = [
-        Message(role=message.role, content=message.content)
-        for message in chat_history[-5:]
-    ]  # Last 5 messages
-
-    # Get response from ChatGPT
-    bot_response = await get_chat_response_with_history(gpt_messages)
+    # Get response from ChatGPT using prepared messages
+    bot_response = await get_chat_response_with_history(prepared_messages)
 
     # Render Markdown to HTML (with safety features)
     bot_response_html = markdown2.markdown(bot_response, safe_mode="escape")
 
-    # Add bot response to chat history
+    # Add user message and bot response to chat history
+    chat_history.append(Message(role=MessageRole.user, content=message))
     chat_history.append(Message(role=MessageRole.assistant, content=bot_response))
 
     # Return HTML for bot response
