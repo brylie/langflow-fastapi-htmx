@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI, Form, Request
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
@@ -7,7 +8,7 @@ import markdown2
 
 from chat_gpt_client import get_chat_response_with_history, Message, MessageRole
 from rag_service import RAGService
-from vector_store import MockVectorStore, PineconeStore  # Or whichever store you prefer
+from vector_store import ChromaDBStore, MockVectorStore
 
 app = FastAPI()
 
@@ -19,8 +20,12 @@ templates = Jinja2Templates(directory="templates")
 # Simulating a database with an in-memory list
 chat_history: List[Message] = []
 
-# Initialize RAG service
-vector_store = MockVectorStore()  # Initialize with your Pinecone settings
+# Get the absolute path to the project root
+project_root = os.path.dirname(os.path.abspath(__file__))
+
+# Initialize RAG service with ChromaDBStore
+chroma_db_path = os.path.join(project_root, "db")
+vector_store = ChromaDBStore(path=chroma_db_path, collection_name="prompt_engineering")
 rag_service = RAGService(vector_store)
 
 SYSTEM_PROMPT = "You are a helpful assistant that answers questions based on the given context and chat history."
