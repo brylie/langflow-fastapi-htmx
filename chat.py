@@ -4,12 +4,15 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 from typing import List, Dict
+import markdown2
 
-from llm_client import get_chat_response  # Import the function from llm_client.py
+from llm_client import get_chat_response
 
 app = FastAPI()
+
 # Mount the static directory
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
 templates = Jinja2Templates(directory="templates")
 
 # Simulating a database with an in-memory list
@@ -24,7 +27,11 @@ class Message(BaseModel):
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request) -> HTMLResponse:
     return templates.TemplateResponse(
-        "chat.html", {"request": request, "chat_history": chat_history}
+        "chat.html",
+        {
+            "request": request,
+            "chat_history": chat_history,
+        },
     )
 
 
@@ -36,13 +43,16 @@ async def chat(message: str = Form(...)) -> HTMLResponse:
     # Get response from LLM
     bot_response = await get_chat_response(message)
 
+    # Render Markdown to HTML (with safety features)
+    bot_response_html = markdown2.markdown(bot_response, safe_mode="escape")
+
     # Add bot response to chat history
-    chat_history.append({"role": "bot", "content": bot_response})
+    chat_history.append({"role": "bot", "content": bot_response_html})
 
     # Return HTML for bot response
     return HTMLResponse(f"""
         <div class="message bot-message">
-            <p>{bot_response}</p>
+            {bot_response_html}
         </div>
     """)
 
