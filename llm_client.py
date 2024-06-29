@@ -1,7 +1,7 @@
 import httpx
 from typing import Optional, Dict, Any
 
-BASE_API_URL = "http://127.0.0.1:7860/api/v1/run"
+BASE_API_URL = "http://127.0.0.1:7861/api/v1/run"
 FLOW_ID = "8c4e757e-4bbf-45b0-b131-14a3e9af1836"
 ENDPOINT = ""  # You can set a specific endpoint name in the flow settings
 

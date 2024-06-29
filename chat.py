@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Form, Request
 from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 from typing import List, Dict
@@ -7,6 +8,8 @@ from typing import List, Dict
 from llm_client import get_chat_response  # Import the function from llm_client.py
 
 app = FastAPI()
+# Mount the static directory
+app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
 # Simulating a database with an in-memory list
