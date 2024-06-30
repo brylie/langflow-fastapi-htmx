@@ -5,6 +5,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 from typing import List, Dict
 import markdown2
+import uuid
 
 from chat_gpt_client import get_chat_response_with_history, Message, MessageRole
 from rag_service import RAGService
@@ -61,13 +62,17 @@ async def chat(request: Request, message: str = Form(...)) -> HTMLResponse:
     chat_history.append(Message(role=MessageRole.user, content=message))
     chat_history.append(Message(role=MessageRole.assistant, content=bot_response))
 
-    # Render the bot message template
+    # Generate a unique ID for the sources container
+    sources_container_id = f"sources-{uuid.uuid4()}"
+
+    # Render the bot message template with a unique ID for the sources container
     response_html = templates.TemplateResponse(
         "bot_message.html",
         {
             "request": request,
             "bot_response_html": bot_response_html,
             "citations": citations,
+            "sources_container_id": sources_container_id,
         },
     )
 
