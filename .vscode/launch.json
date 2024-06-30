@@ -5,9 +5,9 @@
             "type": "debugpy",
             "request": "launch",
             "module": "uvicorn",
-            "cwd": "${workspaceFolder}/app",
+            "cwd": "${workspaceFolder}",
             "args": [
-                "chat:app",
+                "app.main:app",
                 "--reload",
             ],
             "jinja": true
