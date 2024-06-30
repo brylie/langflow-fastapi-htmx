@@ -107,7 +107,7 @@ hyperframe==6.0.1
 idna==3.7
 ijson==3.3.0
 importlib_metadata==7.1.0
-importlib_resources==6.4.0
+importlib_resources==6.4.2
 iniconfig==2.0.0
 Jinja2==3.1.4
 jiter==0.5.0
@@ -192,7 +192,7 @@ platformdirs==4.2.2
 pluggy==1.5.0
 portalocker==2.10.0
 postgrest==0.16.8
-posthog==3.5.0
+posthog==3.5.1
 prompt_toolkit==3.0.47
 proto-plus==1.24.0
 protobuf==4.25.3

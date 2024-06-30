@@ -33,7 +33,10 @@ async def test_get_chat_response_with_history_api_error(mock_client, chat_histor
 @pytest.mark.asyncio
 @patch("app.chat_gpt_client.client")
 async def test_get_chat_response_with_history_empty_message(mock_client, load_env_variables):
+    # Using AsyncMock to simulate async API call
+    mock_client.chat.completions.create = AsyncMock(return_value=MockResponse())
     response = await get_chat_response_with_history([])
+    # Adjusted assertion to match expected response for an empty history scenario
     assert response == "Mocked response content"  # Assuming the API handles empty histories gracefully
 
 @pytest.mark.parametrize("message_content,expected", [
