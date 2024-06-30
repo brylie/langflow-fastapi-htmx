@@ -1,7 +1,8 @@
 from typing import List, Tuple
-from vector_store import VectorStore
-from chat_gpt_client import Message, MessageRole
-from models import RagCitation
+
+from app.vector_store import VectorStore
+from app.chat_gpt_client import Message, MessageRole
+from app.models import RagCitation
 
 
 class RAGService:
