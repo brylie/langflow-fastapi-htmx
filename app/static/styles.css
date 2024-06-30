@@ -1,8 +1,23 @@
+:root {
+    --user-message-bg: #0056b3;
+    --bot-message-bg: #2c2c2c;
+    --text-color: #e0e0e0;
+    --input-bg: #333333;
+    --input-text: #ffffff;
+}
+
+body {
+    background-color: #1a1a1a;
+    color: var(--text-color);
+}
+
 .chat-container {
     height: 70vh;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
+    background-color: #242424;
+    border: 1px solid #3a3a3a;
 }
 
 .message {
@@ -21,13 +36,14 @@
 }
 
 .user-message {
-    background-color: #007bff;
+    background-color: var(--user-message-bg);
     color: white;
     align-self: flex-end;
 }
 
 .bot-message {
-    background-color: #f1f1f1;
+    background-color: var(--bot-message-bg);
+    color: var(--text-color);
     align-self: flex-start;
 }
 
@@ -40,7 +56,7 @@
 .dot {
     width: 8px;
     height: 8px;
-    background-color: #888;
+    background-color: #b0b0b0;
     border-radius: 50%;
     margin: 0 3px;
     animation: bounce 1.3s linear infinite;
@@ -67,7 +83,6 @@
     }
 }
 
-
 .sources-toggle .bi {
     transition: transform 0.2s ease-in-out;
 }
@@ -78,4 +93,43 @@
 
 .sources-toggle[aria-expanded="true"] .toggle-text {
     content: "Hide Sources";
+}
+
+/* Form input styling */
+.form-control {
+    background-color: var(--input-bg);
+    color: var(--input-text);
+    border-color: #4a4a4a;
+}
+
+.form-control:focus {
+    background-color: var(--input-bg);
+    color: var(--input-text);
+    border-color: #6a6a6a;
+    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.25);
+}
+
+/* Button styling */
+.btn-primary {
+    background-color: var(--user-message-bg);
+    border-color: var(--user-message-bg);
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    background-color: #0062cc;
+    border-color: #005cbf;
+}
+
+/* Sources toggle button */
+.btn-outline-secondary {
+    color: #b0b0b0;
+    border-color: #b0b0b0;
+}
+
+.btn-outline-secondary:hover,
+.btn-outline-secondary:focus {
+    color: #ffffff;
+    background-color: #4a4a4a;
+    border-color: #b0b0b0;
 }
