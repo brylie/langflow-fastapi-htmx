@@ -76,6 +76,22 @@ You should now see the chat interface and be able to interact with the chatbot.
 - HTML templates are stored in the `templates` directory.
 - Static files (CSS, JavaScript) are in the `static` directory.
 
+## Running Tests
+
+To run tests, use the following command:
+
+```bash
+pytest
+```
+
+This will execute all tests in the `tests/` directory. For measuring test coverage, you can use `pytest-cov` by running:
+
+```bash
+pytest --cov=app
+```
+
+This command will provide a report on the test coverage for the application.
+
 ## Troubleshooting
 
 If you encounter any issues:
