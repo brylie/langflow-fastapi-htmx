@@ -8,7 +8,7 @@ import markdown2
 
 from chat_gpt_client import get_chat_response_with_history, Message, MessageRole
 from rag_service import RAGService
-from vector_store import ChromaDBStore, MockVectorStore
+from vector_store import ChromaDBStore
 
 app = FastAPI()
 
