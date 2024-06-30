@@ -52,3 +52,18 @@ window.onload = function() {
     var chatContainer = document.getElementById('chat-container');
     chatContainer.scrollTop = chatContainer.scrollHeight;
 };
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    document.body.addEventListener('click', function(event) {
+        if (event.target.classList.contains('sources-toggle')) {
+            var button = event.target;
+            var buttonText = button.querySelector('.toggle-text');
+            if (button.getAttribute('aria-expanded') === 'true') {
+                buttonText.textContent = 'Hide Sources';
+            } else {
+                buttonText.textContent = 'Show Sources';
+            }
+        }
+    });
+});

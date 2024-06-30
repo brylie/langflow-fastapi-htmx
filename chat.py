@@ -43,9 +43,9 @@ async def read_root(request: Request) -> HTMLResponse:
 
 
 @app.post("/chat")
-async def chat(message: str = Form(...)) -> HTMLResponse:
+async def chat(request: Request, message: str = Form(...)) -> HTMLResponse:
     # Prepare messages with the correct order
-    prepared_messages = await rag_service.prepare_messages(
+    prepared_messages, sources = await rag_service.prepare_messages_with_sources(
         system_prompt=SYSTEM_PROMPT,
         chat_history=chat_history[-5:],  # Last 5 messages for context
         user_message=message,
@@ -61,8 +61,17 @@ async def chat(message: str = Form(...)) -> HTMLResponse:
     chat_history.append(Message(role=MessageRole.user, content=message))
     chat_history.append(Message(role=MessageRole.assistant, content=bot_response))
 
-    # Return HTML for bot response
-    return HTMLResponse(f'<div class="message bot-message">{bot_response_html}</div>')
+    # Render the bot message template
+    response_html = templates.TemplateResponse(
+        "bot_message.html",
+        {
+            "request": request,
+            "bot_response_html": bot_response_html,
+            "sources": sources,
+        },
+    )
+
+    return response_html
 
 
 @app.get("/api/chat_history")

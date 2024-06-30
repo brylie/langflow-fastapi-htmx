@@ -66,3 +66,16 @@
         transform: translateY(-10px);
     }
 }
+
+
+.sources-toggle .bi {
+    transition: transform 0.2s ease-in-out;
+}
+
+.sources-toggle[aria-expanded="true"] .bi {
+    transform: rotate(180deg);
+}
+
+.sources-toggle[aria-expanded="true"] .toggle-text {
+    content: "Hide Sources";
+}

@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple
 from vector_store import VectorStore
 from chat_gpt_client import Message, MessageRole
 
@@ -8,33 +8,42 @@ class RAGService:
         self.vector_store = vector_store
 
     async def get_relevant_context(
-        self,
-        query: str,
-        top_k: int = 5,
-    ) -> str:
+        self, query: str, top_k: int = 5
+    ) -> Tuple[str, List[str]]:
         results = await self.vector_store.query(query, top_k)
-        # Process and format the results into a single context string
-        context = "\n".join(
-            [f"Document {i+1}: {result.content}" for i, result in enumerate(results)]
-        )
-        return context
+        context = "\n".join([result.content for result in results])
+        sources = [result.metadata.source for result in results]
+        return context, sources
 
-    async def prepare_messages(
-        self,
-        system_prompt: str,
-        chat_history: List[Message],
-        user_message: str,
-    ) -> List[Message]:
-        # Get relevant context based on the user's message
-        context = await self.get_relevant_context(user_message)
+    async def prepare_messages_with_sources(
+        self, system_prompt: str, chat_history: List[Message], user_message: str
+    ) -> Tuple[List[Message], List[str]]:
+        context, sources = await self.get_relevant_context(user_message)
 
-        # Prepare the messages in the correct order
         prepared_messages = [
-            Message(role=MessageRole.system, content=system_prompt),
-            *chat_history,
             Message(
-                role=MessageRole.user,
-                content=f"Relevant context:\n{context}\n\nUser message: {user_message}",
+                role=MessageRole.system,
+                content=f"{system_prompt}\n\nRelevant context: {context}",
             ),
+            *chat_history,
+            Message(role=MessageRole.user, content=user_message),
         ]
+
+        return prepared_messages, sources
+
+    # Keep the original prepare_messages method for backwards compatibility
+    async def prepare_messages(
+        self, system_prompt: str, chat_history: List[Message], user_message: str
+    ) -> List[Message]:
+        context, _ = await self.get_relevant_context(user_message)
+
+        prepared_messages = [
+            Message(
+                role=MessageRole.system,
+                content=f"{system_prompt}\n\nRelevant context: {context}",
+            ),
+            *chat_history,
+            Message(role=MessageRole.user, content=user_message),
+        ]
+
         return prepared_messages
