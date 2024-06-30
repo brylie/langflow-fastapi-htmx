@@ -34,6 +34,7 @@ click==8.1.7
 cohere==5.5.8
 coloredlogs==15.0.1
 colorlog==6.8.2
+coverage==7.5.4
 cryptography==42.0.8
 dataclasses-json==0.6.7
 datasets==2.18.0
@@ -107,7 +108,7 @@ hyperframe==6.0.1
 idna==3.7
 ijson==3.3.0
 importlib_metadata==7.1.0
-importlib_resources==6.4.2
+importlib_resources==6.4.0
 iniconfig==2.0.0
 Jinja2==3.1.4
 jiter==0.5.0
@@ -192,7 +193,7 @@ platformdirs==4.2.2
 pluggy==1.5.0
 portalocker==2.10.0
 postgrest==0.16.8
-posthog==3.5.1
+posthog==3.5.0
 prompt_toolkit==3.0.47
 proto-plus==1.24.0
 protobuf==4.25.3
@@ -218,6 +219,7 @@ PyPika==0.48.9
 pyproject_hooks==1.1.0
 pytest==8.2.2
 pytest-asyncio==0.23.7
+pytest-cov==5.0.0
 python-dateutil==2.9.0.post0
 python-docx==1.1.2
 python-dotenv==1.0.1
