@@ -45,7 +45,7 @@ async def read_root(request: Request) -> HTMLResponse:
 @app.post("/chat")
 async def chat(request: Request, message: str = Form(...)) -> HTMLResponse:
     # Prepare messages with the correct order
-    prepared_messages, sources = await rag_service.prepare_messages_with_sources(
+    prepared_messages, citations = await rag_service.prepare_messages_with_sources(
         system_prompt=SYSTEM_PROMPT,
         chat_history=chat_history[-5:],  # Last 5 messages for context
         user_message=message,
@@ -67,7 +67,7 @@ async def chat(request: Request, message: str = Form(...)) -> HTMLResponse:
         {
             "request": request,
             "bot_response_html": bot_response_html,
-            "sources": sources,
+            "citations": citations,
         },
     )
 
