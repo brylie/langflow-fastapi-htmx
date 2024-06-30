@@ -1,21 +1,22 @@
 <div class="message bot-message card mb-3">
     <div class="card-body">
-        <div class="message-content">{{ bot_response_html | safe }}</div>
+        <div class="message-content">
+            {{ bot_response_html | safe }}
+        </div>
         <div class="sources-container mt-3">
-            <button class="btn btn-sm btn-outline-secondary sources-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#sourcesList" aria-expanded="false" aria-controls="sourcesList">
-                <span class="toggle-text">Show Sources</span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
-                    <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
-                </svg>
+            <button class="btn btn-sm btn-outline-secondary" type="button" 
+                    data-bs-toggle="collapse" 
+                    data-bs-target="#sources-{{ message_id }}" 
+                    aria-expanded="false" 
+                    aria-controls="sources-{{ message_id }}">
+                Toggle Sources
             </button>
-            <div class="collapse mt-2" id="sourcesList">
+            <div class="collapse mt-2" id="sources-{{ message_id }}">
                 <div class="card card-body">
                     <h6 class="card-subtitle mb-2 text-muted">Sources:</h6>
                     <ul class="list-group list-group-flush">
                         {% for citation in citations %}
-                            <li class="list-group-item">
-                                <strong>{{ citation.source }}</strong>: {{ citation.content[:200] }}...
-                            </li>
+                            <li class="list-group-item">{{ citation.source }}: {{ citation.content[:100] }}...</li>
                         {% endfor %}
                     </ul>
                 </div>

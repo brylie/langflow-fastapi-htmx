@@ -5,17 +5,20 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 from typing import List, Dict
 import markdown2
+import uuid
 
-from chat_gpt_client import get_chat_response_with_history, Message, MessageRole
-from rag_service import RAGService
-from vector_store import ChromaDBStore
+from app.chat_gpt_client import get_chat_response_with_history, Message, MessageRole
+from app.rag_service import RAGService
+from app.vector_store import ChromaDBStore
 
 app = FastAPI()
 
-# Mount the static directory
-app.mount("/static", StaticFiles(directory="static"), name="static")
+templates_directory = os.path.join(os.path.dirname(__file__), "templates")
+templates = Jinja2Templates(directory=templates_directory)
 
-templates = Jinja2Templates(directory="templates")
+# Mount the static directory
+static_directory = os.path.join(os.path.dirname(__file__), "static")
+app.mount("/static", StaticFiles(directory=static_directory), name="static")
 
 # Simulating a database with an in-memory list
 chat_history: List[Message] = []
@@ -61,13 +64,15 @@ async def chat(request: Request, message: str = Form(...)) -> HTMLResponse:
     chat_history.append(Message(role=MessageRole.user, content=message))
     chat_history.append(Message(role=MessageRole.assistant, content=bot_response))
 
-    # Render the bot message template
+    message_id = str(uuid.uuid4())
+
     response_html = templates.TemplateResponse(
         "bot_message.html",
         {
             "request": request,
             "bot_response_html": bot_response_html,
             "citations": citations,
+            "message_id": message_id,
         },
     )
 
