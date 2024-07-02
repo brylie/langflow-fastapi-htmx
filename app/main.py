@@ -1,4 +1,5 @@
 import os
+from dotenv import load_dotenv
 from fastapi import FastAPI, Form, Request
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
@@ -9,7 +10,13 @@ import uuid
 
 from app.chat_gpt_client import get_chat_response_with_history, Message, MessageRole
 from app.rag_service import RAGService
-from app.vector_store import ChromaDBStore
+from app.vector_store import AstraDBStore
+
+# Load environment variables
+load_dotenv()
+
+astra_collection_name = os.getenv("ASTRA_COLLECTION_NAME")
+
 
 app = FastAPI()
 
@@ -28,7 +35,7 @@ project_root = os.path.dirname(os.path.abspath(__file__))
 
 # Initialize RAG service with ChromaDBStore
 chroma_db_path = os.path.join(project_root, "db")
-vector_store = ChromaDBStore(path=chroma_db_path, collection_name="prompt_engineering")
+vector_store = AstraDBStore(collection_name=astra_collection_name)
 rag_service = RAGService(vector_store)
 
 SYSTEM_PROMPT = "You are a helpful assistant that answers questions based on the given context and chat history."
