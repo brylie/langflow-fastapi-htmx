@@ -3,6 +3,7 @@ import os
 from abc import ABC, abstractmethod
 import random
 from typing import List
+from astrapy import DataAPIClient
 from pydantic import BaseModel, Field
 import chromadb
 from chromadb.config import Settings
@@ -133,6 +134,40 @@ class ChromaDBStore(VectorStore):
 
 
 class AstraDBStore(VectorStore):
+    def __init__(self, collection_name: str = "default_collection"):
+        self.astra_db_endpoint = os.getenv("ASTRA_DB_ENDPOINT")
+        self.astra_db_token = os.getenv("ASTRA_DB_TOKEN")
+        if not self.astra_db_endpoint or not self.astra_db_token:
+            raise ValueError(
+                "ASTRA_DB_ENDPOINT and ASTRA_DB_TOKEN must be set in the environment"
+            )
+
+        self.client = DataAPIClient(token=self.astra_db_token)
+        self.db = self.client.get_database_by_api_endpoint(self.astra_db_endpoint)
+        self.collection = self.db.get_collection(collection_name)
+
     async def query(self, query: str, top_k: int = 5) -> List[VectorStoreResult]:
-        # Implement AstraDB-specific query method
-        pass
+        results = self.collection.find(
+            sort={"$vectorize": query},
+            limit=top_k,
+            projection={"$vectorize": True},
+            include_similarity=True,
+        )
+
+        vector_store_results = []
+        for result in results:
+            # Extract the document content and metadata
+            # document = result.get("document", {})
+            content = result.get("content", "")
+            similarity = result.get("$similarity", 0.0)
+            metadata = result.get("metadata", {})
+            source = metadata.get("source", "Unknown")
+
+            vector_store_results.append(
+                VectorStoreResult(
+                    content=content,
+                    metadata=VectorStoreMetadata(score=similarity, source=source),
+                )
+            )
+
+        return vector_store_results
