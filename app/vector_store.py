@@ -2,7 +2,7 @@ import asyncio
 import os
 from abc import ABC, abstractmethod
 import random
-from typing import List
+from typing import Any, Dict, List
 from astrapy import DataAPIClient
 from pydantic import BaseModel, Field
 import chromadb
@@ -146,6 +146,29 @@ class AstraDBStore(VectorStore):
         self.db = self.client.get_database_by_api_endpoint(self.astra_db_endpoint)
         self.collection = self.db.get_collection(collection_name)
 
+    def _filter_unique_results(
+        self,
+        results: List[Dict[str, Any]],
+        top_k: int,
+    ) -> List[Dict[str, Any]]:
+        """
+        Filter results to ensure uniqueness based on document ID.
+
+        :param results: List of result dictionaries from AstraDB query
+        :param top_k: Maximum number of results to return
+        :return: List of unique result dictionaries, up to top_k in length
+        """
+        seen_content = set()
+        unique_results = []
+        for result in results:
+            content = result.get("content")
+            if content not in seen_content:
+                seen_content.add(content)
+                unique_results.append(result)
+                if len(unique_results) == top_k:
+                    break
+        return unique_results
+
     async def query(self, query: str, top_k: int = 5) -> List[VectorStoreResult]:
         results = self.collection.find(
             sort={"$vectorize": query},
@@ -154,8 +177,11 @@ class AstraDBStore(VectorStore):
             include_similarity=True,
         )
 
+        # Filter for unique results
+        unique_results = self._filter_unique_results(results, top_k)
+
         vector_store_results = []
-        for result in results:
+        for result in unique_results:
             # Extract the document content and metadata
             # document = result.get("document", {})
             content = result.get("content", "")
