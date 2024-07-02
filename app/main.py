@@ -1,4 +1,5 @@
 import os
+from dotenv import load_dotenv
 from fastapi import FastAPI, Form, Request
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
@@ -9,7 +10,9 @@ import uuid
 
 from app.chat_gpt_client import get_chat_response_with_history, Message, MessageRole
 from app.rag_service import RAGService
-from app.vector_store import ChromaDBStore
+
+# Load environment variables
+load_dotenv()
 
 app = FastAPI()
 
