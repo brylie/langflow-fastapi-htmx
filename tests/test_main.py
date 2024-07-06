@@ -24,7 +24,12 @@ async def mock_get_chat_response_with_history(*args, **kwargs):
 
 
 @pytest.fixture
-def mock_services(monkeypatch):
+def load_env_variables(monkeypatch):
+    monkeypatch.setenv("OPENAI_API_KEY", "test_api_key")
+
+
+@pytest.fixture
+def mock_services(monkeypatch, load_env_variables):
     # Mock RAG service
     monkeypatch.setattr(
         "app.main.rag_service.prepare_messages_with_sources",
