@@ -18,6 +18,7 @@ body {
     flex-direction: column;
     background-color: #242424;
     border: 1px solid #3a3a3a;
+    scroll-behavior: smooth;
 }
 
 .message {

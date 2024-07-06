@@ -65,8 +65,11 @@ async def read_root(request: Request) -> HTMLResponse:
     )
 
 
-@app.post("/chat")
+@app.post("/chat", response_class=HTMLResponse)
 async def chat(request: Request, message: str = Form(...)) -> HTMLResponse:
+    user_message_id = str(uuid.uuid4())
+    bot_message_id = str(uuid.uuid4())
+
     # Prepare messages with the correct order
     prepared_messages, citations = await rag_service.prepare_messages_with_sources(
         system_prompt=f"<system-prompt>{SYSTEM_PROMPT}</system-prompt>",
@@ -84,19 +87,15 @@ async def chat(request: Request, message: str = Form(...)) -> HTMLResponse:
     chat_history.append(Message(role=MessageRole.user, content=message))
     chat_history.append(Message(role=MessageRole.assistant, content=bot_response))
 
-    message_id = str(uuid.uuid4())
+    response_html = f"""
+    <div id="user-message-{user_message_id}" class="user-message">{message}</div>
+    <div id="bot-message-{bot_message_id}" class="bot-message">{bot_response_html}</div>
+    <script>
+    scrollToMessage('bot-message-{bot_message_id}');
+    </script>
+    """
 
-    response_html = templates.TemplateResponse(
-        "bot_message.html",
-        {
-            "request": request,
-            "bot_response_html": bot_response_html,
-            "citations": citations,
-            "message_id": message_id,
-        },
-    )
-
-    return response_html
+    return HTMLResponse(content=response_html)
 
 
 @app.get("/api/chat_history")
