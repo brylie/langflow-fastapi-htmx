@@ -20,9 +20,6 @@ document.body.addEventListener('htmx:beforeRequest', function(event) {
     // Append typing indicator
     var typingIndicator = document.getElementById('typing-indicator').content.cloneNode(true);
     chatContainer.appendChild(typingIndicator);
-    
-    // Scroll to bottom
-    chatContainer.scrollTop = chatContainer.scrollHeight;
 });
 
 document.body.addEventListener('htmx:afterSwap', function(event) {
@@ -42,13 +39,4 @@ document.body.addEventListener('htmx:afterSwap', function(event) {
     
     // Add 'show' class to trigger animation
     newMessage.classList.add('show');
-    
-    // Scroll to bottom
-    chatContainer.scrollTop = chatContainer.scrollHeight;
 });
-
-// Scroll to bottom on page load
-window.onload = function() {
-    var chatContainer = document.getElementById('chat-container');
-    chatContainer.scrollTop = chatContainer.scrollHeight;
-};
