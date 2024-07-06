@@ -40,3 +40,25 @@ document.body.addEventListener('htmx:afterSwap', function(event) {
     // Add 'show' class to trigger animation
     newMessage.classList.add('show');
 });
+
+function scrollToLastMessage() {
+    const chatContainer = document.getElementById('chat-container');
+    const lastMessage = chatContainer.lastElementChild;
+    if (lastMessage) {
+        lastMessage.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
+const chatContainer = document.getElementById('chat-container');
+const observer = new MutationObserver((mutations) => {
+    for (let mutation of mutations) {
+        if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+            scrollToLastMessage();
+            break;
+        }
+    }
+});
+
+observer.observe(chatContainer, { childList: true });
+
+document.addEventListener('DOMContentLoaded', scrollToLastMessage);
