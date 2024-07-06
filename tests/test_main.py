@@ -36,6 +36,9 @@ def mock_services(monkeypatch):
         "app.main.get_chat_response_with_history", mock_get_chat_response_with_history
     )
 
+    # Set the OPENAI_API_KEY environment variable
+    monkeypatch.setenv("OPENAI_API_KEY", "test_api_key")
+
 
 def test_sources_toggle_independent(mock_services):
     messages = [
