@@ -70,6 +70,14 @@ http://127.0.0.1:8000
 
 You should now see the chat interface and be able to interact with the chatbot.
 
+## Continuous Integration (CI) Process
+
+We use GitHub Actions to automatically run our pytest suite on every pull request to the main branch. This ensures that all tests pass before changes can be merged.
+
+### CI Status Badge
+
+![CI Status](https://github.com/brylie/langflow-fastapi-htmx/actions/workflows/pytest.yml/badge.svg)
+
 ## Development
 
 - The main application code is in `chat.py`.
