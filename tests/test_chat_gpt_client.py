@@ -21,8 +21,9 @@ def load_env_variables(monkeypatch):
 @pytest.mark.asyncio
 @patch("app.chat_gpt_client.client")
 async def test_get_chat_response_with_history_success(
-    mock_client, chat_history, load_env_variables
+    mock_client, chat_history, load_env_variables, monkeypatch
 ):
+    monkeypatch.setenv("OPENAI_API_KEY", "test_api_key")
     mock_client.chat.completions.create = AsyncMock(return_value=MockResponse())
     response = await get_chat_response_with_history(chat_history)
     assert response == "Mocked response content"
@@ -31,8 +32,9 @@ async def test_get_chat_response_with_history_success(
 @pytest.mark.asyncio
 @patch("app.chat_gpt_client.client")
 async def test_get_chat_response_with_history_api_error(
-    mock_client, chat_history, load_env_variables
+    mock_client, chat_history, load_env_variables, monkeypatch
 ):
+    monkeypatch.setenv("OPENAI_API_KEY", "test_api_key")
     mock_client.chat.completions.create = AsyncMock(side_effect=Exception("API error"))
     response = await get_chat_response_with_history(chat_history)
     assert "I'm sorry, but I encountered an error: API error" in response
@@ -41,8 +43,9 @@ async def test_get_chat_response_with_history_api_error(
 @pytest.mark.asyncio
 @patch("app.chat_gpt_client.client")
 async def test_get_chat_response_with_history_empty_message(
-    mock_client, load_env_variables
+    mock_client, load_env_variables, monkeypatch
 ):
+    monkeypatch.setenv("OPENAI_API_KEY", "test_api_key")
     # Using AsyncMock to simulate async API call
     mock_client.chat.completions.create = AsyncMock(return_value=MockResponse())
     response = await get_chat_response_with_history([])
@@ -62,8 +65,9 @@ async def test_get_chat_response_with_history_empty_message(
 @pytest.mark.asyncio
 @patch("app.chat_gpt_client.client")
 async def test_get_chat_response_with_history_parameterized(
-    mock_client, message_content, expected, load_env_variables
+    mock_client, message_content, expected, load_env_variables, monkeypatch
 ):
+    monkeypatch.setenv("OPENAI_API_KEY", "test_api_key")
     mock_client.chat.completions.create = AsyncMock(return_value=MockResponse())
     messages = [
         Message(role=MessageRole.user, content=content) for content in message_content
