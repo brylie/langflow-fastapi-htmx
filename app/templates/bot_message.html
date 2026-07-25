@@ -16,7 +16,13 @@
                     <h6 class="card-subtitle mb-2 text-muted">Sources:</h6>
                     <ul class="list-group list-group-flush">
                         {% for citation in citations %}
-                            <li class="list-group-item">{{ citation.source }}: {{ citation.content[:100] }}...</li>
+                            <li class="list-group-item citation-list-item">
+                                <i class="bi bi-file-earmark-text citation-source-icon" 
+                                   data-bs-toggle="tooltip" 
+                                   data-bs-placement="top" 
+                                   title="{{ citation.source }}"></i>
+                                {{ citation.content[:1000] }}...
+                            </li>
                         {% endfor %}
                     </ul>
                 </div>

@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>George Fox writings</title>
+    <title>{{ chat_title }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
     <link href="/static/styles.css" rel="stylesheet">
     <script src="https://unpkg.com/htmx.org@1.9.2"></script>
 </head>
 <body data-bs-theme="dark">
     <div class="container mt-5">
-        <h1 class="mb-4">George Fox and Quakerism chat</h1>
-        <p>Ask me anything about George Fox and Quakerism. I am here to help you.</p>
+        <h1 class="mb-4">{{ chat_title }}</h1>
         <div class="chat-container p-3 border rounded" id="chat-container">
             <!-- Initial greeting message -->
             <div class="message bot-message show">
-                <p>Hello! How are you? How can I assist you today? Let's chat about George Fox and Quakerism.</p>
+                <p>{{ welcome_message }}</p>
             </div>
             <!-- Chat messages will be inserted here -->
         </div>

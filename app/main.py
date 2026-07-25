@@ -1,4 +1,5 @@
 import os
+from dotenv import load_dotenv
 from fastapi import FastAPI, Form, Request
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
@@ -9,7 +10,27 @@ import uuid
 
 from app.chat_gpt_client import get_chat_response_with_history, Message, MessageRole
 from app.rag_service import RAGService
-from app.vector_store import ChromaDBStore
+from app.vector_store import AstraDBStore
+
+# Load environment variables
+load_dotenv()
+
+# Load configuration from environment variables with default values
+CHAT_TITLE = os.getenv(
+    "CHAT_TITLE",
+    "AI Chat Assistant",
+)
+WELCOME_MESSAGE = os.getenv(
+    "WELCOME_MESSAGE",
+    "Welcome! How can I assist you today?",
+)
+SYSTEM_PROMPT = os.getenv(
+    "SYSTEM_PROMPT",
+    "You are a helpful assistant that answers questions based on the given context and chat history.",
+)
+# TODO: Move this to be a Pydantc Field on the AstraDBStore (AstraDBConfig?)
+ASTRA_COLLECTION_NAME = os.getenv("ASTRA_COLLECTION_NAME")
+
 
 app = FastAPI()
 
@@ -28,7 +49,7 @@ project_root = os.path.dirname(os.path.abspath(__file__))
 
 # Initialize RAG service with ChromaDBStore
 chroma_db_path = os.path.join(project_root, "db")
-vector_store = ChromaDBStore(path=chroma_db_path, collection_name="prompt_engineering")
+vector_store = AstraDBStore(collection_name=ASTRA_COLLECTION_NAME)
 rag_service = RAGService(vector_store)
 
 SYSTEM_PROMPT = "<system-prompt>You are a friendly, helpful assistant. Your main focus is the writings of George Fox and the history, faith, and practice of Quakers. You are knowledgeable about the Quaker movement and its teachings. You are here to answer questions and provide information about Quakerism. If the conversation strays from the topic of Quakerism, you can gently guide it back. Do not respond to messages that are inappropriate, offensive, or off-topic.</system-prompt>"
@@ -40,7 +61,8 @@ async def read_root(request: Request) -> HTMLResponse:
         "chat.html",
         {
             "request": request,
-            "chat_history": chat_history,
+            "chat_title": CHAT_TITLE,
+            "welcome_message": WELCOME_MESSAGE,
         },
     )
 
@@ -49,7 +71,7 @@ async def read_root(request: Request) -> HTMLResponse:
 async def chat(request: Request, message: str = Form(...)) -> HTMLResponse:
     # Prepare messages with the correct order
     prepared_messages, citations = await rag_service.prepare_messages_with_sources(
-        system_prompt=SYSTEM_PROMPT,
+        system_prompt=f"<system-prompt>{SYSTEM_PROMPT}</system-prompt>",
         chat_history=chat_history[-5:],  # Last 5 messages for context
         user_message=message,
     )

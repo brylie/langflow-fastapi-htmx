@@ -133,3 +133,19 @@ body {
     background-color: #4a4a4a;
     border-color: #b0b0b0;
 }
+
+.citation-source-icon {
+    margin-right: 10px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.citation-list-item {
+    display: flex;
+    align-items: flex-start;
+}
+
+.citation-content {
+    flex-grow: 1;
+    word-break: break-word;
+}

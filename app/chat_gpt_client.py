@@ -1,6 +1,5 @@
 from enum import Enum
 from openai import AsyncOpenAI, BaseModel
-from dotenv import load_dotenv
 import os
 import logging
 from typing import List
@@ -21,9 +20,6 @@ class Message(BaseModel):
     role: MessageRole
     content: str
 
-
-# Load environment variables
-load_dotenv()
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)

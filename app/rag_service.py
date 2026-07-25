@@ -10,7 +10,9 @@ class RAGService:
         self.vector_store = vector_store
 
     async def get_relevant_context(
-        self, query: str, top_k: int = 5
+        self,
+        query: str,
+        top_k: int = 5,
     ) -> Tuple[str, List[RagCitation]]:
         results = await self.vector_store.query(query, top_k)
         context = "\n".join([result.content for result in results])
@@ -21,7 +23,10 @@ class RAGService:
         return context, citations
 
     async def prepare_messages_with_sources(
-        self, system_prompt: str, chat_history: List[Message], user_message: str
+        self,
+        system_prompt: str,
+        chat_history: List[Message],
+        user_message: str,
     ) -> Tuple[List[Message], List[RagCitation]]:
         context, citations = await self.get_relevant_context(user_message)
 

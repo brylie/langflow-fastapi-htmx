@@ -20,9 +20,6 @@ document.body.addEventListener('htmx:beforeRequest', function(event) {
     // Append typing indicator
     var typingIndicator = document.getElementById('typing-indicator').content.cloneNode(true);
     chatContainer.appendChild(typingIndicator);
-    
-    // Scroll to bottom
-    chatContainer.scrollTop = chatContainer.scrollHeight;
 });
 
 document.body.addEventListener('htmx:afterSwap', function(event) {
@@ -42,13 +39,26 @@ document.body.addEventListener('htmx:afterSwap', function(event) {
     
     // Add 'show' class to trigger animation
     newMessage.classList.add('show');
-    
-    // Scroll to bottom
-    chatContainer.scrollTop = chatContainer.scrollHeight;
 });
 
-// Scroll to bottom on page load
-window.onload = function() {
-    var chatContainer = document.getElementById('chat-container');
-    chatContainer.scrollTop = chatContainer.scrollHeight;
-};
+function scrollToLastMessage() {
+    const chatContainer = document.getElementById('chat-container');
+    const lastMessage = chatContainer.lastElementChild;
+    if (lastMessage) {
+        lastMessage.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
+const chatContainer = document.getElementById('chat-container');
+const observer = new MutationObserver((mutations) => {
+    for (let mutation of mutations) {
+        if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+            scrollToLastMessage();
+            break;
+        }
+    }
+});
+
+observer.observe(chatContainer, { childList: true });
+
+document.addEventListener('DOMContentLoaded', scrollToLastMessage);
